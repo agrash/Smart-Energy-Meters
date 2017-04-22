@@ -1,0 +1,306 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Auth Demo</title>
+                <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Smart Energy Meters</a>
+                </div>
+               <ul class = "nav navbar-nav">
+               <!--elements of the navigation bar -->
+                    <li>
+                        <a href="/Bharti">Bharti</a>
+                    </li>
+                    <li>
+                        <a href ="/SIT">SIT</a> 
+                    </li>
+                    <li class='active'>
+                        <a href ="/Block4">Block4</a> 
+                    </li>
+                    <li >
+                        <a href ="/Block6">Library</a> 
+                    </li>
+                    <li>
+                        <a href ="/Girnar">Girnar</a> 
+                    </li>
+                    <li>
+                        <a href ="/Udaigiri">Udaigiri</a> 
+                    </li>
+                </ul>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Account
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="/index">Ahead</a>
+                                </li>
+                                <li>
+                                    <a href="/logout">Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script src = "{% static 'js/jquery.min.js' %}"></script>	<!-- used by highcharts and bootstrap-->
+        <script src = "{% static 'js/bootstrap.min.js' %}"></script>	<!--used by bootstrap-->
+		<script src = "{% static 'highcharts.js' %}"></script>		<!--used by highcharts-->
+		<script src = "{% static 'data.js' %}"></script>		<!--used by highcharts-->
+	    <div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+					<!-- elements of sidebar-->
+						<li class="active"><a href="/Overview">Overview</a></li>
+						<li><a href="/static/analytics.pdf">Analytics</a></li>
+						<li><a href="/static/Block4/chart.csv">Download Data Set</a></li>
+					</ul>
+				</div>
+
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-2">
+							<div class="dropdown">
+								<button id="day" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Time Interval <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+								<!-- options for selecting the time interval-->
+									<li><a href="#" onclick=Today()>Today</a></li>
+									<li><a href="#" onclick=Yesterday()>Yesterday</a></li>
+									<li><a href="#" onclick=Month()>This Month</a></li>
+									<li><a href="#" onclick=Begin()>Since Beginning</a></li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<div class="dropdown">
+								<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sampling Time <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+								<!-- options for sampling time -->
+									<li><a href="#" onclick=5min()>5 min</a></li>
+									<li><a href="#" onclick=10min()>10 min</a></li>
+									<li><a href="#" onclick=15min()>15 min</a></li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<div class="dropdown">
+								<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Day of week <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+								<!-- choosing weekdays or weekends-->
+									<li><a href="#" onclick=Weekdays()>Weekdays</a></li>
+									<li><a href="#" onclick=Weekends()>Weekends</a></li>
+									<li><a href="#" onclick=AllDays()>All Days</a></li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<div class="dropdown">
+								<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Parameters <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+								<!--whether to plot energy or power-->
+									<li><a href="#" onclick=Energy()>Energy</a></li>
+									<li><a href="#" onclick=Power()>Power</a></li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-md-1">
+							<button class="btn btn-primary" type="button" onclick=Plot()>Plot</button>
+						</div>
+
+						<div class="col-md-1">
+							<button class="btn btn-primary" type="button" onclick="document.getElementById('container').style.visibility = 'hidden'">Clear</button>
+						</div>
+					</div>
+					<div id="container" style="width:100%"; height:400px;"></div>
+					<script>
+					var today_date = new Date();
+					var yesterday_date = new Date() -24*3600*1000;	// subtaracting milliseconds in one day
+					var interval = 1;	// interval is initialised to 1 meaning the sampling time if user doesn't select is 5 min
+					var date = 32;		// just chose a date that doesn't exists
+					var month = 32;		// month number that doesn't exist
+					var day = 2;		// day=1 means weekends 0 means weekdays and 2 means all days
+					function Weekdays(){
+						day = 0;
+					}
+					function Weekends(){
+						day = 1;
+					}
+					function AllDays(){
+						day = 2;
+					}
+					function Today(){
+						date = today_date.getDate();
+						month = today_date.getMonth();
+					}
+					function Yesterday(){
+						date = yesterday_date.getDate();
+						month = yesterday_date.getMonth();
+					}
+					function Month(){
+						date = 32;
+						month = today_date.getMonth();
+					}
+					function Begin(){
+						date = 32;
+						month = 32;
+					}
+					function 5min(){
+						interval = 1;
+					}
+					function 10min(){
+						interval = 2;
+					}
+					function 15min() {
+						interval = 3;
+					}
+					var plot_power = false;
+					function Energy(){
+						plot_power = false;
+					}
+					function Power(){
+						plot_power = true;
+					}
+					function Plot()
+					{
+						if (!plot_power)
+						{
+							$(function () {
+								var options = {	//initialising options for highcharts
+									chart: {
+										renderTo: 'container',
+										type: 'line',
+									},
+									title: {
+										text: "Enegy Consumption in Block4"
+									},
+									xAxis: {
+										type: 'datetime',
+										tickPixelInterval: 125,
+									},
+									yAxis: {
+										title: {
+											text: 'Energy Consumption (in kWh)',
+										},
+									},
+									series: [{
+										name: 'Energy',
+										data: [],
+									}]
+								}
+								$.get("{% static 'Block4/chart.csv' %}", function(csv){
+									var lines = csv.split('\n');
+									$.each(lines, function (lineNo, line) {
+										var data = line.split('"');
+										if (lineNo != 0){
+											if (lineNo%interval == 0)
+											{
+												// formatting csv data in such a way so that highcharts can use it
+												var seperated_data = data[0].split("-");
+												var date_energy = seperated_data[2].split(',')
+												var date_time = date_energy[0].split(' ');
+												var energy = parseFloat(date_energy[1])*0.01; //0.01 beacuse there is a mutiplication factor when we get the reading from the meter
+												var x = + new Date(items[0]+'/'+items[1]+'/'+date_time[0]+' '+date_time[1]) + 19800000;	//+19800000 because of the time zone GMT+5:30
+												var y = new Date(items[0]+'/'+items[1]+'/'+date_time[0]+' '+date_time[1]); // as highcharts and javascript uses different date objects
+												if ((date == 32 && month == 32)||(date == 32 && month == y.getMonth())||(date == y.getDate() && month == y.getMonth())){// the condition states that either both date and month can take any value or month has speciifed value or date has specified value, 32 is chosen because it is not a valid date, the conditions are decided by the input given by the user.
+													if ((day == 2)||(day == 1 && (y.getDay() == 0 || y.getDay() == 6))||(day == 0 && (y.getDay() > 0 && y.getDay() < 6))) // same as above, just we chose that whether we want to plot weekdays or weekends or both
+														options.series[0].data.push([x,energy]);
+												}
+											}
+										}
+										new Highcharts.Chart(options);
+									});
+								});
+							});
+							document.getElementById('container').style.visibility = 'visible';
+						}
+						else
+						{
+							$(function () {
+								var options = {
+									chart: {
+										renderTo: 'container',
+										type: 'line',
+									},
+									title: {
+										text: "Power Consumption in Block4"
+									},
+									xAxis: {
+										type: 'datetime',
+										tickPixelInterval: 125,
+									},
+									yAxis: {
+										title: {
+											text: 'Power Consumption (in kW)',
+										},
+									},
+									series: [{
+										name: 'Power',
+										data: [],
+									}]
+								}
+								$.get("{% static 'Block4/chart.csv' %}", function(csv){
+									var lines = csv.split('\n');
+									var prev_energy = 0.0;
+									var prev_time;
+									$.each(lines, function (lineNo, line) {
+										var item = line.split('"');
+										if (lineNo != 0)
+										{
+											if (lineNo % interval == 0)
+											{
+												// formatting csv data in such a way so that highcharts can use it
+												var seperated_data = data[0].split("-");
+												var date_energy = seperated_data[2].split(',')
+												var date_time = date_energy[0].split(' ');
+												var energy = parseFloat(date_energy[1])*0.01; //0.01 beacuse there is a mutiplication factor when we get the reading from the meter
+												var x = + new Date(items[0]+'/'+items[1]+'/'+date_time[0]+' '+date_time[1]) + 19800000;	//+19800000 because of the time zone GMT+5:30
+												if (lineNo != interval)
+												{
+													var power = energy - prev_energy;
+													var t = ((x - prev_time)/(1000*3600)); // division to convert the time in hours from millisecond
+													power = power/t;
+													var y = new Date(items[0]+'/'+items[1]+'/'+date_time[0]+' '+date_time[1]); // as highcharts and javascript uses different date objects
+													if ((date == 32 && month == 32)||(date == 32 && month == y.getMonth())||(date == y.getDate() && month == y.getMonth())){// the condition states that either both date and month can take any value or month has speciifed value or date has specified value, 32 is chosen because it is not a valid date, the conditions are decided by the input given by the user.
+													if ((day == 2)||(day == 1 && (y.getDay() == 0 || y.getDay() == 6))||(day == 0 && (y.getDay() > 0 && y.getDay() < 6))) // same as above, just we chose that whether we want to plot weekdays or weekends or both
+															options.series[0].data.push([x,power]);
+													}
+												}
+												prev_energy = energy;
+												prev_time = x;
+											}
+										}
+										new Highcharts.Chart(options);
+									});
+								});
+							});
+							document.getElementById('container').style.visibility = 'visible';
+						}
+					}
+					</script>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

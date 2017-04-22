@@ -1,0 +1,85 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Auth Demo</title>
+                <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Smart Energy Meters</a>
+                </div>
+               <ul class = "nav navbar-nav">
+                    <li>
+                        <a href="/Bharti">Bharti</a>
+                    </li>
+                    <li>
+                        <a href ="/SIT">SIT</a> 
+                    </li>
+                    <li >
+                        <a href ="/Block4">Block4</a> 
+                    </li>
+                    <li >
+                        <a href ="/Block6">Library</a> 
+                    </li>
+                    <li>
+                        <a href ="/Girnar">Girnar</a> 
+                    </li>
+                    <li>
+                        <a href ="/Udaigiri">Udaigiri</a> 
+                    </li>
+                </ul>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Account
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="/index">Ahead</a>
+                                </li>
+                                <li>
+                                    <a href="/logout">Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script src = "{% static 'js/jquery.min.js' %}"></script>
+        <script src = "{% static 'js/bootstrap.min.js' %}"></script>
+		<script src = "{% static 'highcharts.js' %}"></script>
+		<script src = "{% static 'data.js' %}"></script>
+	    <div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li class="active"><a href="/Overview">Overview</a></li>
+						<li><a href="/Girnar_Analytics">Analytics</a></li>
+						<li><a href="/static/Girnar/chart.csv">Download Data Set</a></li>
+					</ul>
+				</div>
+
+				<div class="col-md-10">
+				<pre>
+It contains the consumption of the entire building via the electric board supply(EB). According to the single line diagram of the building it has two rising mains whrein one has the direcct supply from the board. And the other has the UPS power supply for emergency. The EB supply rising mains is connected to the meter and it gives the total consumption.
+The model of the digital meter installed is EM34DS from Nippen which is a smart digital meter. It has the provision of RS485 protocol for communication.
+				</pre>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

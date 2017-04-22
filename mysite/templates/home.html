@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<!--
+<div class="container">
+    <div class="row">
+        <div class="jumbotron">
+            <h1>Hello</h1>
+            <p>You are on your Dashboard</p>
+        </div>
+    </div>
+</div>
+    -->
+<script src = "{% static 'highcharts.js' %}"></script>
+<script src = "{% static 'data.js' %}"></script>
+    <div class="container-fluid">
+		<div class="row">
+			<div class="col-md-2 sidebar">
+				<ul class="nav nav-sidebar">
+					<li class="active"><a href="/Overview">Overview</a></li>
+					<li><a href="#">Analytics</a></li>
+					<li><a href="#">Download Data Set</a></li>
+				</ul>
+
+<!--				<p>Loads</p>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">UPS-3rd Floor</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">RM-1 Power</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">RM-2</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">AC-Plant</label>
+				</div>-->
+			</div>
+
+			<div class="col-md-10">
+				<div class="row">
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Time Interval <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#" onclick=ch1()>Today</a></li>
+								<li><a href="#" onclick=ch2()>Yesterday</a></li>
+								<li><a href="#" onclick=ch3()>Last 7 days</a></li>
+								<li><a href="#" onclick=ch4()>Last 30 days</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sampling Time <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">1 min</a></li>
+								<li><a href="#">5 min</a></li>
+								<li><a href="#">15 min</a></li>
+								<li><a href="#">30 min</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Day of week <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Weekdays</a></li>
+								<li><a href="#">Weekends</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Parameters <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Energy</a></li>
+								<li><a href="#">Power</a></li>
+								<li><a href="#">Voltage</a></li>
+								<li><a href="#">Current</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-1">
+						<button class="btn btn-primary" type="button" onclick=plot()>Plot</button>
+					</div>
+
+					<div class="col-md-1">
+						<button class="btn btn-primary" type="button" onclick="document.getElementById('container').style.visibility = 'hidden'">Clear</button>
+					</div>
+				</div>
+				<div id="container" style="width:100%"; height:400px;"></div>
+				<script>
+				var interval = 0;
+				function ch1(){
+					interval = 23;
+				}
+				function ch2(){
+					interval = 24;
+				}
+				function ch3() {
+					interval = 27;
+				}
+				function ch4() {
+					interval = 0;
+				}
+				function plot()
+				{
+					$(function () {
+						var options = {
+							chart: {
+								renderTo: 'container',
+								type: 'line',
+							},
+							title: {
+								text: "Enegy Consumption in IIT"
+							},
+							xAxis: {
+								type: 'datetime',
+								tickPixelInterval: 125,
+							},
+							yAxis: {
+								title: {
+									text: 'Energy Consumption (in KWh)',
+								},
+							},
+							series: [{
+								name: 'Energy',
+								data: [],
+							}]
+						}
+						$.get("{% static 'chart.csv' %}", function(csv){
+							var lines = csv.split('\n');
+							$.each(lines, function (lineNo, line) {
+								var item = line.split('"');
+								if (lineNo != 0){
+									var items = item[1].split("-");
+									var date_time = items[2].split(' ');
+									var date = date_time[0];
+									var time = date_time[1];
+									var random = item[2].split(',');
+									var energy = parseFloat(random[1]);
+									var x = + new Date(items[0]+'/'+items[1]+'/'+date+' '+time);
+									if (date == interval || interval == 0)
+										options.series[0].data.push([x,energy]);
+								}
+								new Highcharts.Chart(options);
+							});
+						});
+					});
+					document.getElementById('container').style.visibility = 'visible';
+				}
+				</script>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Dashboard</title>
+	<meta name='viewport' content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap.css">
+
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.css">
+
+
+	<script src='js/npm.js'></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src='js/bootstrap.min.js'></script>
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Smart Energy Meters</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Username</a></li>
+            <li><a href="#">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <br><br><br>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-2 sidebar">
+				<ul class="nav nav-sidebar">
+					<li class="active"><a href="#">Overview</a></li>
+					<li><a href="#">Reports</a></li>
+					<li><a href="#">Analytics</a></li>
+					<li><a href="#">Download Data Set</a></li>
+				</ul>
+
+				<p>Loads</p>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">UPS-3rd Floor</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">RM-1 Power</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">RM-2</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" value="">AC-Plant</label>
+				</div>
+			</div>
+
+			<div class="col-md-10">
+				<div class="row">
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Time Interval <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Today</a></li>
+								<li><a href="#">Yesterday</a></li>
+								<li><a href="#">Last 7 days</a></li>
+								<li><a href="#">Last 30 days</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sampling Time <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">1 min</a></li>
+								<li><a href="#">5 min</a></li>
+								<li><a href="#">15 min</a></li>
+								<li><a href="#">30 min</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Day of week <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Weekdays</a></li>
+								<li><a href="#">Weekends</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Parameters <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Energy</a></li>
+								<li><a href="#">Power</a></li>
+								<li><a href="#">Voltage</a></li>
+								<li><a href="#">Current</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-1">
+						<button class="btn btn-primary" type="button">Plot</button>
+					</div>
+
+					<div class="col-md-1">
+						<button class="btn btn-primary" type="button">Clear</button>
+					</div>
+				</div>
+
+				<div>
+					<img src="graph.png" class="img-responsive">
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
+-->
